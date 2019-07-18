@@ -1,4 +1,6 @@
-package com.walmartlabs;
+package com.walmartlabs.drone.delivery.utils;
+
+import com.walmartlabs.drone.delivery.models.Delivery;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -7,11 +9,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-import static com.walmartlabs.OrderUtils.getTimeFromSecond;
+import static com.walmartlabs.drone.delivery.utils.OrderUtils.getTimeFromSecond;
 
 public class DeliveryFileWriter {
 
-    public void writeOrderDeliveriesToFile(String fileName, List<Delivery> orderDeliveries, int totalOrderCount) throws IOException {
+    public void writeDeliveriesToFile(String fileName, List<Delivery> orderDeliveries, int totalOrderCount) throws IOException {
 
         BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
 

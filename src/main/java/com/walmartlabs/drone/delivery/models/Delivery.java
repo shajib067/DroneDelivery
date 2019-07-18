@@ -1,4 +1,4 @@
-package com.walmartlabs;
+package com.walmartlabs.drone.delivery.models;
 
 public class Delivery {
     private String orderId;

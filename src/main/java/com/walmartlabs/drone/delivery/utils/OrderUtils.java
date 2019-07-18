@@ -1,4 +1,6 @@
-package com.walmartlabs;
+package com.walmartlabs.drone.delivery.utils;
+
+import com.walmartlabs.drone.delivery.models.Order;
 
 public final class OrderUtils {
     private static final int SECONDS_IN_HOUR = 3600;
@@ -42,5 +44,9 @@ public final class OrderUtils {
         return "" + (hh < 10? ("0" + hh) : hh) + ":" +
                 (mm < 10? ("0" + mm) : mm) + ":" +
                 (ss < 10? ("0" + ss) : ss);
+    }
+
+    public static boolean isNullOrEmpty(String s) {
+        return s == null || s.length() == 0;
     }
 }
