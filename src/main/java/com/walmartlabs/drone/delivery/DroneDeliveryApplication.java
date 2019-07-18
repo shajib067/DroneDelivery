@@ -24,7 +24,9 @@ public class DroneDeliveryApplication {
         int totalOrderCount = orders.size();
 
         List<Delivery> deliveries = schedulingService.scheduleOrderDeliveries(orders);
-        schedulingService.serializeDeliveries(outputFile, deliveries, totalOrderCount);
+        outputFile = schedulingService.serializeDeliveries(outputFile, deliveries, totalOrderCount);
+
+        System.out.println(outputFile);
     }
 
     public static void main(String[] args) throws IOException {

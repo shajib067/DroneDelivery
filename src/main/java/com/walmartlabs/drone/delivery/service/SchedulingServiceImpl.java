@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.walmartlabs.drone.delivery.utils.OrderUtils.getScore;
-import static com.sun.tools.javac.util.Assert.checkNonNull;
+import static com.walmartlabs.drone.delivery.utils.OrderUtils.checkNonNull;
 
 public class SchedulingServiceImpl implements SchedulingService {
 
@@ -18,7 +18,6 @@ public class SchedulingServiceImpl implements SchedulingService {
     private static final int MINUTE_SECONDS = 60;
     private static final int DELIVERY_START_TIME = 6 * 3600;
     private static final int DELIVERY_END_TIME = 22 * 3600;
-    private static final String OUTPUT_FILE = "output.txt";
 
     private OrderFileParser orderFileParser = new OrderFileParser();
     private DeliveryFileWriter deliveryFileWriter = new DeliveryFileWriter();
@@ -75,12 +74,14 @@ public class SchedulingServiceImpl implements SchedulingService {
     }
 
     @Override
-    public void serializeDeliveries(String fileName, List<Delivery> deliveries, int totalOrderCount) throws IOException {
+    public String serializeDeliveries(String fileName, List<Delivery> deliveries, int totalOrderCount) throws IOException {
 
         checkNonNull(fileName, "fileName can not be null");
         checkNonNull(deliveries, "Delivery list can not be null");
 
         deliveryFileWriter.writeDeliveriesToFile(fileName, deliveries, totalOrderCount);
+
+        return fileName;
     }
 
     private void sortOrderByScore(List<Order> orders, long startTime) {

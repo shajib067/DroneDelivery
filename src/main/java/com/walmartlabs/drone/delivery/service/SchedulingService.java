@@ -10,5 +10,5 @@ public interface SchedulingService {
     List<Order> deserializeOrders(String fileName) throws IOException;
     Order nextOrder(List<Order> input, long startTime);
     List<Delivery> scheduleOrderDeliveries(List<Order> orders);
-    void serializeDeliveries(String fileName, List<Delivery> deliveries, int totalOrderCount) throws IOException;
+    String serializeDeliveries(String fileName, List<Delivery> deliveries, int totalOrderCount) throws IOException;
 }

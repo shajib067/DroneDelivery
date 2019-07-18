@@ -49,4 +49,12 @@ public final class OrderUtils {
     public static boolean isNullOrEmpty(String s) {
         return s == null || s.length() == 0;
     }
+
+    public static <T> T checkNonNull(T reference, String errorMessage) {
+        if (reference == null) {
+            throw new NullPointerException(errorMessage);
+        } else {
+            return reference;
+        }
+    }
 }
