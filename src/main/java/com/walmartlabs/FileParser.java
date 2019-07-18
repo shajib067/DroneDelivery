@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.walmartlabs.OrderUtils.getDistance;
-import static com.walmartlabs.OrderUtils.getOrderTimeInSeconds;
+import static com.walmartlabs.OrderUtils.getOrderTimeInSecond;
 
 public class FileParser {
     private static final String SPLITTER = " ";
@@ -23,7 +23,7 @@ public class FileParser {
             String[] order = currentLine.split(SPLITTER);
             String orderId = order[0];
             double distance = getDistance(order[1]);
-            long orderTime = getOrderTimeInSeconds(order[2]);
+            long orderTime = getOrderTimeInSecond(order[2]);
             orders.add(new Order(orderId, distance, orderTime));
         }
 

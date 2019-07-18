@@ -15,7 +15,7 @@ public class OrderProcessor {
 
     private void sortOrderByScore(List<Order> orders, long startTime) {
 
-        Collections.sort(orders, (a, b) -> {
+        orders.sort((a, b) -> {
             Integer pointA = getScore(a, startTime);
             Integer pointB = getScore(b, startTime);
             return pointB.compareTo(pointA);
