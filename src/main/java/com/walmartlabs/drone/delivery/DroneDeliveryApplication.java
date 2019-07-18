@@ -15,10 +15,11 @@ public class DroneDeliveryApplication {
     private static final String DEFAULT_INPUT_FILE = "/Users/shajibkhan/Workspace/DroneDelivery/src/main/resources/orders.txt";
     private static final String DEFAULT_OUTPUT_FILE = "/Users/shajibkhan/Workspace/DroneDelivery/src/main/resources/output.txt";
 
+    private SchedulingService schedulingService = new SchedulingServiceImpl();
+
     public void run(String inputFile, String outputFile) throws IOException {
         inputFile = isNullOrEmpty(inputFile) ? DEFAULT_INPUT_FILE : inputFile;
         outputFile = isNullOrEmpty(outputFile) ? DEFAULT_OUTPUT_FILE : outputFile;
-        SchedulingService schedulingService = new SchedulingServiceImpl();
 
         List<Order> orders = schedulingService.deserializeOrders(inputFile);
         int totalOrderCount = orders.size();
@@ -26,7 +27,7 @@ public class DroneDeliveryApplication {
         List<Delivery> deliveries = schedulingService.scheduleOrderDeliveries(orders);
         outputFile = schedulingService.serializeDeliveries(outputFile, deliveries, totalOrderCount);
 
-        System.out.println(outputFile);
+        System.out.println("\nDelivery schedules are as follows:\n" + outputFile + "\n");
     }
 
     public static void main(String[] args) throws IOException {
