@@ -14,10 +14,11 @@ public class OrderFileParser {
     private static final String SPLITTER = " ";
 
     public List<Order> parseFile(String fileName) throws IOException {
+
         File file = new File(fileName);
         BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
-        String currentLine = null;
         List<Order> orders = new ArrayList<>();
+        String currentLine = null;
 
         while((currentLine = bufferedReader.readLine()) != null) {
             String[] order = currentLine.split(SPLITTER);

@@ -3,6 +3,7 @@ package com.walmartlabs.drone.delivery.service;
 import com.walmartlabs.drone.delivery.models.Delivery;
 import com.walmartlabs.drone.delivery.models.Order;
 import com.walmartlabs.drone.delivery.utils.DeliveryFileWriter;
+import com.walmartlabs.drone.delivery.utils.DroneDeliveryConstants;
 import com.walmartlabs.drone.delivery.utils.OrderFileParser;
 
 import java.io.IOException;
@@ -13,11 +14,6 @@ import static com.walmartlabs.drone.delivery.utils.OrderUtils.getScore;
 import static com.walmartlabs.drone.delivery.utils.OrderUtils.checkNonNull;
 
 public class SchedulingServiceImpl implements SchedulingService {
-
-    private static final int HOUR_SECONDS = 3600;
-    private static final int MINUTE_SECONDS = 60;
-    private static final int DELIVERY_START_TIME = 6 * 3600;
-    private static final int DELIVERY_END_TIME = 22 * 3600;
 
     private OrderFileParser orderFileParser = new OrderFileParser();
     private DeliveryFileWriter deliveryFileWriter = new DeliveryFileWriter();
@@ -42,12 +38,12 @@ public class SchedulingServiceImpl implements SchedulingService {
         for (Order order : orders) {
             if (result == null) {
                 result = order;
-                cutOff = (long) (result.getOrderTime() + HOUR_SECONDS - order.getDistance() * MINUTE_SECONDS);
+                cutOff = (long) (result.getOrderTime() + DroneDeliveryConstants.SECONDS_IN_HOUR - order.getDistance() * DroneDeliveryConstants.SECONDS_IN_MINUTE);
                 continue;
             }
-            if(order.getDistance() * HOUR_SECONDS + startTime < cutOff) {
+            if(order.getDistance() * DroneDeliveryConstants.SECONDS_IN_HOUR + startTime < cutOff) {
                 result = order;
-                cutOff = (long) (result.getOrderTime() + HOUR_SECONDS - order.getDistance() * MINUTE_SECONDS);
+                cutOff = (long) (result.getOrderTime() + DroneDeliveryConstants.SECONDS_IN_HOUR - order.getDistance() * DroneDeliveryConstants.SECONDS_IN_MINUTE);
             }
         }
         orderList.remove(result);
@@ -60,14 +56,14 @@ public class SchedulingServiceImpl implements SchedulingService {
 
         checkNonNull(orders, "Order list can not be null");
 
-        long startTime = Math.max(orders.get(0).getOrderTime(), DELIVERY_START_TIME);
+        long startTime = Math.max(orders.get(0).getOrderTime(), DroneDeliveryConstants.DELIVERY_START_TIME);
         int size = orders.size();
         List<Delivery> deliveries = new ArrayList<>();
 
-        while (startTime < DELIVERY_END_TIME && deliveries.size() < size) {
+        while (startTime < DroneDeliveryConstants.DELIVERY_END_TIME && deliveries.size() < size) {
             Order orderToDeliver = nextOrder(orders, startTime);
             deliveries.add(new Delivery(orderToDeliver.getOrderId(), startTime, getScore(orderToDeliver, startTime)));
-            startTime += orderToDeliver.getDistance() * MINUTE_SECONDS * 2;
+            startTime += orderToDeliver.getDistance() * DroneDeliveryConstants.SECONDS_IN_MINUTE * 2;
         }
 
         return deliveries;

@@ -27,7 +27,7 @@ public class DroneDeliveryApplication {
         List<Delivery> deliveries = schedulingService.scheduleOrderDeliveries(orders);
         outputFile = schedulingService.serializeDeliveries(outputFile, deliveries, totalOrderCount);
 
-        System.out.println("\nDelivery schedules are as follows:\n" + outputFile + "\n");
+        System.out.println("\nDelivery schedules' file path is:\n" + outputFile + "\n");
     }
 
     public static void main(String[] args) throws IOException {
