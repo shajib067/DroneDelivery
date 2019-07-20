@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface SchedulingService {
     List<Order> deserializeOrders(String fileName) throws IOException;
-    Order nextOrder(List<Order> input, long startTime);
+    Order nextOrder(List<Order> input);
     List<Delivery> scheduleOrderDeliveries(List<Order> orders);
     String serializeDeliveries(String fileName, List<Delivery> deliveries, int totalOrderCount) throws IOException;
 }

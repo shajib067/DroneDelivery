@@ -1,7 +1,6 @@
 package com.walmartlabs.drone.delivery.utils;
 
 import com.walmartlabs.drone.delivery.models.Order;
-import com.walmartlabs.drone.delivery.utils.OrderUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -25,7 +24,10 @@ public class OrderFileParser {
             String orderId = order[0];
             double distance = OrderUtils.getDistance(order[1]);
             long orderTime = OrderUtils.getOrderTimeInSecond(order[2]);
-            orders.add(new Order(orderId, distance, orderTime));
+            long startTime = Math.max(orderTime, DroneDeliveryConstants.DELIVERY_START_TIME);
+            long shippingDuration = (long) Math.ceil(distance / DroneDeliveryConstants.DRONE_SPEED_PER_SECOND);
+            long finishTime = startTime + shippingDuration * 2;
+            orders.add(new Order(orderId, distance, orderTime, shippingDuration, startTime, finishTime, 0));
         }
 
         bufferedReader.close();

@@ -24,46 +24,76 @@ public class SchedulingServiceImpl implements SchedulingService {
         return orderFileParser.parseFile(fileName);
     }
 
-    @Override
-    public Order nextOrder(List<Order> orderList, long startTime) {
-
-        checkNonNull(orderList, "Orders list can not be null");
-
-        sortOrderByScore(orderList, startTime);
-        List<Order> orders = filterValidOrders(orderList, startTime);
-
-        Order result = null;
-        long cutOff = -1;
-
-        for (Order order : orders) {
-            if (result == null) {
-                result = order;
-                cutOff = (long) (result.getOrderTime() + DroneDeliveryConstants.SECONDS_IN_HOUR - order.getDistance() * DroneDeliveryConstants.SECONDS_IN_MINUTE);
-                continue;
+    int getPrevOrderIndex(Order[] orders, int i) {
+        int left = 0, right = i - 1;
+        while(left <= right) {
+            int mid = left + (right - left) / 2;
+            if(orders[mid].getFinishTime() <= orders[i].getStartTime()) {
+                if(mid + 1 < i && orders[mid + 1].getFinishTime() > orders[i].getStartTime()) {
+                    return mid;
+                }
+                else {
+                    left = mid + 1;
+                }
             }
-            if(order.getDistance() * DroneDeliveryConstants.SECONDS_IN_HOUR + startTime < cutOff) {
-                result = order;
-                cutOff = (long) (result.getOrderTime() + DroneDeliveryConstants.SECONDS_IN_HOUR - order.getDistance() * DroneDeliveryConstants.SECONDS_IN_MINUTE);
+            else {
+                right = mid - 1;
             }
         }
-        orderList.remove(result);
+        return -1;
+    }
+
+    @Override
+    public Order nextOrder(List<Order> orders) {
+
+        checkNonNull(orders, "Orders list can not be null");
+
+        sortOrdersByFinishTime(orders);
+
+        Order[] orderArray = orders.stream().toArray(Order[]::new);
+        int[] scores = new int[orderArray.length];
+        int[] prevOrderIndex = new int[orderArray.length];
+
+        scores[0] = orderArray[0].getScore();
+        prevOrderIndex[0] = 0;
+
+        for(int i = 1; i < orderArray.length; i++) {
+            int score = orderArray[i].getScore();
+            int prevIndex = getPrevOrderIndex(orderArray, i);
+            prevOrderIndex[i] = i;
+            if (prevIndex != -1) {
+                score += scores[prevIndex];
+                prevOrderIndex[i] = prevOrderIndex[prevIndex];
+            }
+            if(score <= scores[i - 1]) {
+                prevOrderIndex[i] = prevOrderIndex[i - 1];
+            }
+            scores[i] = Math.max(scores[i - 1], score);
+        }
+
+        Order result = orderArray[prevOrderIndex[orderArray.length - 1]];
+
+        orders.remove(result);
 
         return result;
     }
 
     @Override
-    public List<Delivery> scheduleOrderDeliveries(List<Order> orders) {
+    public List<Delivery> scheduleOrderDeliveries(List<Order> orderList) {
 
-        checkNonNull(orders, "Order list can not be null");
+        checkNonNull(orderList, "Order list can not be null");
 
-        long startTime = Math.max(orders.get(0).getOrderTime(), DroneDeliveryConstants.DELIVERY_START_TIME);
-        int size = orders.size();
+        long startTime = DroneDeliveryConstants.DELIVERY_START_TIME;
+
+        List<Order> orders = new ArrayList<>(orderList);
         List<Delivery> deliveries = new ArrayList<>();
 
-        while (startTime < DroneDeliveryConstants.DELIVERY_END_TIME && deliveries.size() < size) {
-            Order orderToDeliver = nextOrder(orders, startTime);
-            deliveries.add(new Delivery(orderToDeliver.getOrderId(), startTime, getScore(orderToDeliver, startTime)));
-            startTime += orderToDeliver.getDistance() * DroneDeliveryConstants.SECONDS_IN_MINUTE * 2;
+        while (!orders.isEmpty()) {
+            updateOrders(orders, startTime);
+            orders = filterValidOrders(orders);
+            Order orderToDeliver = nextOrder(orders);
+            deliveries.add(new Delivery(orderToDeliver.getOrderId(), orderToDeliver.getStartTime(), orderToDeliver.getScore()));
+            startTime = orderToDeliver.getFinishTime();
         }
 
         return deliveries;
@@ -80,19 +110,24 @@ public class SchedulingServiceImpl implements SchedulingService {
         return fileName;
     }
 
-    private void sortOrderByScore(List<Order> orders, long startTime) {
+    private List<Order> filterValidOrders(List<Order> orders) {
 
-        orders.sort((a, b) -> {
-            Integer pointA = getScore(a, startTime);
-            Integer pointB = getScore(b, startTime);
-            return pointB.compareTo(pointA);
+        return orders.stream()
+                .filter(r -> r.getFinishTime() <= DroneDeliveryConstants.DELIVERY_END_TIME)
+                .collect(Collectors.toList());
+    }
+
+    private void updateOrders(List<Order> orders, long startTime) {
+        orders.stream().forEach(order -> {
+            if(startTime > order.getStartTime()) {
+                order.setStartTime(startTime);
+                order.setFinishTime(order.getStartTime() + order.getShippingDuration() * 2);
+            }
+            order.setScore(getScore(order));
         });
     }
 
-    private List<Order> filterValidOrders(List<Order> orders, long startTime) {
-
-        return orders.stream()
-                .filter(r -> r.getOrderTime() <= startTime)
-                .collect(Collectors.toList());
+    private void sortOrdersByFinishTime(List<Order> orders) {
+        orders.sort(Comparator.comparingLong(Order::getFinishTime));
     }
 }

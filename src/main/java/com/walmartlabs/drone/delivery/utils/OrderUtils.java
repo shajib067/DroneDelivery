@@ -4,12 +4,10 @@ import com.walmartlabs.drone.delivery.models.Order;
 
 public final class OrderUtils {
 
-    public static int getScore(Order order, long startTime) {
-        double oneWayShippingDuration = order.getDistance() / DroneDeliveryConstants.DRONE_SPEED_PER_SECOND;
-        long deliveryTime = (long) (startTime + Math.ceil(oneWayShippingDuration));
-        if(deliveryTime + oneWayShippingDuration > DroneDeliveryConstants.DELIVERY_END_TIME)
+    public static int getScore(Order order) {
+        if(order.getFinishTime() > DroneDeliveryConstants.DELIVERY_END_TIME)
             return 0;
-        return 10 - (int)((deliveryTime - order.getOrderTime()) / DroneDeliveryConstants.SECONDS_IN_HOUR);
+        return 10 - (int)((order.getStartTime() + order.getShippingDuration() - order.getOrderTime()) / DroneDeliveryConstants.SECONDS_IN_HOUR);
     }
 
     public static double getDistance(String path) {
