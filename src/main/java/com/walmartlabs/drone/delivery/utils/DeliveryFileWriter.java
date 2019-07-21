@@ -23,7 +23,7 @@ public class DeliveryFileWriter {
             bufferedWriter.write(delivery.getOrderId() + " " + getTimeFromSecond(delivery.getDeliveryStartTime()) + "\n");
         }
 
-        bufferedWriter.write("NPS = " + calculateNPS(orderDeliveries, totalOrderCount) + "\n");
+        bufferedWriter.write("NPS " + calculateNPS(orderDeliveries, totalOrderCount) + "\n");
 
         bufferedWriter.close();
     }

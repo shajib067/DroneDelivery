@@ -67,13 +67,15 @@ public class SchedulingServiceImpl implements SchedulingService {
         while (!orders.isEmpty()) {
             orders = filterValidOrders(orders, deliveryStartTime);
             Order orderToDeliver = nextOrder(orders, deliveryStartTime);
-            deliveryStartTime = Math.max(deliveryStartTime, orderToDeliver.getOrderTime());
-            deliveries.add(Delivery.builder()
-                    .setOrderId(orderToDeliver.getOrderId())
-                    .setDeliveryStartTime(deliveryStartTime)
-                    .setScore(calculateScore(orderToDeliver, deliveryStartTime))
-                    .build());
-            deliveryStartTime += orderToDeliver.getDistance() / DroneDeliveryConstants.DRONE_SPEED_PER_SECOND * 2;
+            if (orderToDeliver != null) {
+                deliveryStartTime = Math.max(deliveryStartTime, orderToDeliver.getOrderTime());
+                deliveries.add(Delivery.builder()
+                        .setOrderId(orderToDeliver.getOrderId())
+                        .setDeliveryStartTime(deliveryStartTime)
+                        .setScore(calculateScore(orderToDeliver, deliveryStartTime))
+                        .build());
+                deliveryStartTime += orderToDeliver.getDistance() / DroneDeliveryConstants.DRONE_SPEED_PER_SECOND * 2;
+            }
         }
 
         return deliveries;

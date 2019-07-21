@@ -37,7 +37,7 @@ public final class Order{
         final Order order = (Order) o;
         return order.orderId.equals(this.orderId)
                 && order.distance == this.distance
-                && order.orderTime == this.distance;
+                && order.orderTime == this.orderTime;
     }
 
     @Override

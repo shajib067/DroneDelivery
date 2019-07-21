@@ -12,8 +12,8 @@ import static com.walmartlabs.drone.delivery.utils.OrderUtils.isNullOrEmpty;
 
 public class DroneDeliveryApplication {
 
-    private static final String DEFAULT_INPUT_FILE = "/Users/shajibkhan/Workspace/DroneDelivery/src/main/resources/orders.txt";
-    private static final String DEFAULT_OUTPUT_FILE = "/Users/shajibkhan/Workspace/DroneDelivery/src/main/resources/output.txt";
+    public static final String DEFAULT_INPUT_FILE = "/Users/shajibkhan/Workspace/DroneDelivery/src/main/resources/orders.txt";
+    public static final String DEFAULT_OUTPUT_FILE = "/Users/shajibkhan/Workspace/DroneDelivery/src/main/resources/output.txt";
 
     private SchedulingService schedulingService = new SchedulingServiceImpl();
 

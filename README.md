@@ -1,20 +1,46 @@
 # Drone Delivery Scheduling
-To build from the project root directory, run (for macOS/linux with mvn pre-installed):
-<code>
+Clone the project from [here](https://github.com/shajib067/DroneDelivery) and build from the root directory, run (for macOS/linux with mvn pre-installed):<br/>
+> $ mvn install<br/>
+> $ mvn exec:java -Dexec.mainClass=com.walmartlabs.drone.delivery.DroneDeliveryApplication -Dexec.args="/Users/shajibkhan/Workspace/DroneDelivery/src/main/resources/orders.txt"<br/>
 
-$ mvn install
+Sample output:<br/>
+>[INFO] --- exec-maven-plugin:1.6.0:java (default-cli) @ droneDelivery ---<br/>
+>Delivery schedules' file path is:<br/>
+>/Users/shajibkhan/Workspace/DroneDelivery/src/main/resources/output.txt<br/>
+>[INFO] ------------------------------------------------------------------------<br/>
+>[INFO] BUILD SUCCESS<br/>
+>[INFO] ------------------------------------------------------------------------<br/>
+>[INFO] Total time: 1.300 s<br/>
 
-$ mvn exec:java -Dexec.mainClass=com.walmartlabs.drone.delivery.DroneDeliveryApplication -Dexec.args="/Users/shajibkhan/Workspace/DroneDelivery/src/main/resources/orders.txt"
-</code>
+
+
+Sample content of input file:<br/>
+>WM001 N11W5 05:11:50<br/>
+>WM002 S3E2  05:11:55<br/>
+>WM003 N7E50 05:31:50<br/>
+>WM004 N11E5 06:11:50<br/>
+
+Content of output.txt file for above input:<br/>
+> WM002 06:00:00<br/>
+> WM001 06:07:12<br/>
+> WM004 06:31:21<br/>
+> WM003 06:55:30<br/>
+> NPS 75.0<br/>
 
 <h3><b>Assumptions:</b>:</h3> 
 
 - The drone can move in any direction, so distance can be calculated from order's location coordinate using pythagorean rule
+
 - The input file contains orders for only one day
+
 - The input file does not contain invalid contents
+
 - The solution needs to schedule orders for one day
+
 - There will be only one file with orders, no subsequent order files will be processed on the same day
+
 - NPS (Net Promoter Score) is the difference between percentage of promoters and detractors based on total orders placed. The orders not delivered that day are counted as detractors with score 0.
+
 - NPS is maximized if total score is maximized
 
 <h3><b>Algorithm</b>:</h3> 
@@ -35,10 +61,8 @@ $ mvn exec:java -Dexec.mainClass=com.walmartlabs.drone.delivery.DroneDeliveryApp
 11. write deliveries and NPS to a file
 
 <p>
-For n number of orders there are n invocation to the process to find the next order, each of which takes nlogn time to sort by score and linear time to find next order. So, the time complexity is n^2.logn. 
+For n number of orders there are n invocation to the process to find the next order, each of which takes nlogn time to sort by score and linear time to find next order. So, the time complexity is n<sup>2</sup>log(n). 
 </p>
 
-<p>
-Notes:
-Weighted job scheduling algorithm could have been applied if delivery times were fixed, and we would have to choose a subset with max total score possible; that would give nlogn time complexity.
-</p>
+<b>Notes:</b><br/>
+Weighted job scheduling algorithm could have been applied if delivery times were fixed, and we would have to choose a subset or orders with max total score possible; that would give nlog(n) time complexity. I tried this [here](https://github.com/shajib067/DroneDelivery/tree/weighted-job-scheduling), but doesn't always finds right solution. this might be fixed with some modified key to choose order.
