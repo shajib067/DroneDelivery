@@ -5,6 +5,7 @@ import com.walmartlabs.drone.delivery.models.Delivery;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -15,7 +16,7 @@ public class DeliveryFileWriter {
 
     public void writeDeliveriesToFile(String fileName, List<Delivery> orderDeliveries, int totalOrderCount) throws IOException {
 
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(fileName));
+        BufferedWriter bufferedWriter = Files.newBufferedWriter(fileName.toPath());
 
         Collections.sort(orderDeliveries, Comparator.comparingLong(Delivery::getDeliveryStartTime));
 
