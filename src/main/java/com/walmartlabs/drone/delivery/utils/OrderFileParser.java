@@ -1,6 +1,7 @@
 package com.walmartlabs.drone.delivery.utils;
 
 import com.walmartlabs.drone.delivery.models.Order;
+import io.github.pixee.security.BoundedLineReader;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -19,7 +20,7 @@ public class OrderFileParser {
         List<Order> orders = new ArrayList<>();
         String currentLine = null;
 
-        while((currentLine = bufferedReader.readLine()) != null) {
+        while((currentLine = BoundedLineReader.readLine(bufferedReader, 5_000_000)) != null) {
             String[] order = currentLine.split(SPLITTER);
             String orderId = order[0];
             double distance = OrderUtils.getDistance(order[1]);
