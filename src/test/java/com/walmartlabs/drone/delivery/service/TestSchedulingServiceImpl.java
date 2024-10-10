@@ -5,6 +5,7 @@ import com.walmartlabs.drone.delivery.models.Delivery;
 import com.walmartlabs.drone.delivery.models.Order;
 import com.walmartlabs.drone.delivery.utils.DroneDeliveryConstants;
 import com.walmartlabs.drone.delivery.utils.OrderUtils;
+import java.nio.file.Files;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -88,7 +89,7 @@ public class TestSchedulingServiceImpl {
         List<String> lines = bufferedReader.lines().collect(toList());
         bufferedReader.close();
 
-        BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(DroneDeliveryApplication.DEFAULT_OUTPUT_FILE));
+        BufferedWriter bufferedWriter = Files.newBufferedWriter(DroneDeliveryApplication.DEFAULT_OUTPUT_FILE.toPath());
         bufferedWriter.flush();
         bufferedWriter.close();
 
